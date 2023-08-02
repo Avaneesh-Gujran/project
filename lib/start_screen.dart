@@ -7,17 +7,17 @@ import 'main.dart';
 import 'package:project/sizes_helpers.dart';
 
 Size displaySize(BuildContext context) {
-  debugPrint('Size = ' + MediaQuery.of(context).size.toString());
+  debugPrint('Size = ${MediaQuery.of(context).size}');
   return MediaQuery.of(context).size;
 }
 
 double displayHeight(BuildContext context) {
-  debugPrint('Height = ' + displaySize(context).height.toString());
+  debugPrint('Height = ${displaySize(context).height}');
   return displaySize(context).height;
 }
 
 double displayWidth(BuildContext context) {
-  debugPrint('Width = ' + displaySize(context).width.toString());
+  debugPrint('Width = ${displaySize(context).width}');
   return displaySize(context).width;
 }
 
@@ -39,14 +39,17 @@ class _LoadingPage extends State<LoadingPage> with TickerProviderStateMixin{
     
   }
 
-  _navigatetohome()async{
-  await Future.delayed(Duration(seconds: 3),() {});
-  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> Home()));
+  
+  _navigatetohome(){
+  Future.delayed(const Duration(seconds: 4,milliseconds: 500),() {
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const Home()));
+  });
+  
 
   }
 
   late final AnimationController _controller = AnimationController(
-    duration: const Duration(seconds: 10),
+    duration: const Duration(seconds: 4,milliseconds: 500),
     vsync: this,
   )..repeat();
 
@@ -62,30 +65,39 @@ class _LoadingPage extends State<LoadingPage> with TickerProviderStateMixin{
 
   @override
   Widget build(BuildContext context) {
-    final widthforImg = displayWidth(context)*0.1;
-    return AnimatedBuilder(
-      animation: _controller,
-      child : Container(
-        
-        
-        child: SizedBox(
-          height: widthforImg,
-          width: 30,
-          child: Image.asset(
-          'newlogo.jpeg',
-          height: widthforImg,
-          width: widthforImg,
-        ),)
-        
-      ),
+    final widthforImg = displayWidth(context)*0.3;
+    print("this is the width: "+widthforImg.toString());
 
-      builder: (BuildContext context, Widget? child) {
-        return Transform.rotate(
-          angle: _controller.value * 2.0 * math.pi,
-          child: child,
-        );
-      },
+    return Scaffold(
+      body: 
+    
+    
+    Center(
+      child: AnimatedBuilder(
+        animation: _controller,
+        
+        child : SizedBox(
+          
+          width: widthforImg,
+          child: Image.asset(
+          'assets/thelogo.png',
+          
+          width: widthforImg,
+          fit: BoxFit.contain,
+    
+        ),),
+    
+        builder: (BuildContext context, Widget? child) {
+          return Transform.rotate(
+            angle: _controller.value * 4.0 * math.pi,
+            child: child,
+          );
+        }
+        
+        ,
+      ),
+    )
     );
   }
-
+  
 }
