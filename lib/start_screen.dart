@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:project/start_screen.dart';
+import 'package:project/loading_screen.dart';
+import 'start_screen.dart';
 import 'dart:math' as math;
 import 'home.dart';
 import 'main.dart';
 
-import 'package:project/sizes_helpers.dart';
+import 'sizes_helpers.dart';
 
 Size displaySize(BuildContext context) {
   debugPrint('Size = ${MediaQuery.of(context).size}');
@@ -31,10 +32,28 @@ class LoadingPage extends StatefulWidget{
 }
 
 class _LoadingPage extends State<LoadingPage> with TickerProviderStateMixin{
+  late  AnimationController _controller;
+  late  AnimationController _controllerTwo;
+
   @override
   void initState(){
     super.initState();
     _navigatetohome();
+     _controller = AnimationController(
+    duration: const Duration(seconds: 4,milliseconds: 500),
+    vsync: this,
+  );
+
+
+    _controllerTwo = 
+AnimationController(
+    duration: const Duration(seconds: 2,milliseconds: 0),
+    vsync: this,
+  );
+  _controllerTwo.animateBack(1,duration: Duration(seconds: 1));
+
+  _controller.repeat();
+  
 
     
   }
@@ -42,16 +61,21 @@ class _LoadingPage extends State<LoadingPage> with TickerProviderStateMixin{
   
   _navigatetohome(){
   Future.delayed(const Duration(seconds: 4,milliseconds: 500),() {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const Home()));
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const LoadingScreen()));
   });
   
 
   }
 
-  late final AnimationController _controller = AnimationController(
-    duration: const Duration(seconds: 4,milliseconds: 500),
-    vsync: this,
-  )..repeat();
+  
+
+  late final Animation<Offset> _offsetAnimation  = Tween<Offset>(
+    begin: Offset.zero,
+    end: const Offset(-0.5, 0.0),
+  ).animate(CurvedAnimation(
+    parent: _controllerTwo,
+    curve: Curves.elasticIn,
+  ));
 
   @override
   void dispose() {
@@ -68,18 +92,22 @@ class _LoadingPage extends State<LoadingPage> with TickerProviderStateMixin{
     final widthforImg = displayWidth(context)*0.3;
     print("this is the width: "+widthforImg.toString());
 
-    return Scaffold(
+    return 
+    Scaffold(
       body: 
     
     
     Center(
-      child: AnimatedBuilder(
+      child: SlideTransition(
+        position: _offsetAnimation,
+        child:
+      AnimatedBuilder(
         animation: _controller,
         
         child : SizedBox(
           
           width: widthforImg,
-          child: Image.asset(
+          child:  Image.asset(
           'assets/thelogo.png',
           
           width: widthforImg,
@@ -97,7 +125,8 @@ class _LoadingPage extends State<LoadingPage> with TickerProviderStateMixin{
         ,
       ),
     )
-    );
+    ),);
   }
   
 }
+
